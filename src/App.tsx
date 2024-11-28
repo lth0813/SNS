@@ -6,8 +6,8 @@ import {
 } from "react-router-dom";
 import "./App.css";
 
+import LoginPage from "./components/FirstPage";
 import Footer from "./components/Footer";
-import LoginPage from "./components/LoginPage copy";
 
 function App() {
   return (

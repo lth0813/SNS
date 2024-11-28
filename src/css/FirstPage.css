@@ -1,21 +1,35 @@
+.login-container,
+.login-container-rotate,
 .signup-container,
-.signup-container-rotate {
+.signup-container-rotate,
+.login-container-rotate-back,
+.signup-container-rotate-back {
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* 중앙 정렬 */
-  min-height: calc(100vh - 100px); /* footer 높이 만큼 빼줌 */
+  justify-content: center;
+  min-height: calc(100vh - 100px);
   padding: 20px;
   width: 100%;
-  transition: transform 0.5s ease;
-  opacity: 1;
 }
+.login-container,
 .signup-container {
   transform: rotateY(0deg);
+  transition: transform 0.45s ease;
 }
+.login-container-rotate,
 .signup-container-rotate {
   transform: rotateY(90deg);
+  transition: transform 0.45s ease;
 }
 
+.signup-container-rotate-back,
+.login-container-rotate-back {
+  transform: rotateY(90deg);
+  transition: transform 0.45s ease;
+}
+
+.login-thumbnail-space,
+.login-thumbnail-space img,
 .signup-thumbnail-space,
 .signup-thumbnail-space img {
   width: 100px;
@@ -28,6 +42,7 @@
   cursor: pointer;
 }
 
+.login-form,
 .signup-form {
   width: 100%;
   max-width: 400px;
@@ -36,6 +51,7 @@
   gap: 15px;
 }
 
+.login-input-field,
 .signup-input-field {
   padding: 12px;
   border-radius: 8px;
@@ -43,11 +59,13 @@
   background-color: #f5f5f5;
 }
 
+.login-input-field:focus,
 .signup-input-field:focus {
   outline: none;
   border-color: #999;
 }
 
+.login-button,
 .signup-button {
   padding: 14px;
   font-size: 1rem;
@@ -59,16 +77,19 @@
   transition: color 0.3s ease, background-color 0.3s ease;
 }
 
+.login-button.enabled,
 .signup-button.enabled {
   color: #fff;
 }
 
+.login-button:disabled,
 .signup-button:disabled {
   background-color: #000; /* 비활성화된 버튼의 배경색 */
   color: darkgray; /* 비활성화된 버튼의 글씨 색 */
   cursor: not-allowed; /* 금지 마우스 커서 */
 }
 
+.login-extra-links,
 .signup-extra-links {
   display: flex;
   justify-content: center;
@@ -76,11 +97,52 @@
   font-size: 0.9rem;
 }
 
-.signup-signup-link {
+/* 로그인 페이지 */
+.login-signup-link,
+.login-forgot-password {
   color: #666;
   text-decoration: none;
+  cursor: pointer;
 }
 
+.login-separator {
+  color: #999;
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.login-divider hr {
+  flex: 1;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+
+.login-google-button,
+.login-kakao-button {
+  padding: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+  border: none;
+}
+
+.login-google-button {
+  background-color: #4285f4;
+  color: #fff;
+}
+
+.login-kakao-button {
+  background-color: #fee500;
+  color: #3c1e1e;
+}
+/* 회원가입 페이지 */
 .signup-button {
   padding: 12px;
   font-size: 1rem;
@@ -166,4 +228,10 @@
 .username-message.invalid,
 .password-match-message.invalid {
   color: red;
+}
+
+.password-validation-message.invalid {
+  color: red;
+  font-size: 0.7rem;
+  margin-top: 2px;
 }

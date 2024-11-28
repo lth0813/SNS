@@ -1,25 +1,40 @@
 import React, { useState } from "react";
-import "../css/LoginPage.css";
-import "../css/SignupPage.css";
+import "../css/FirstPage.css";
 import thumbnail from "../images/thumbnail.jpg";
 
 const LoginPage: React.FC = () => {
   const [isLoginPage, setIsLoginPage] = useState(true);
   const [LoginDisplay, setLoginDisplay] = useState(true);
   const [SignupDisplay, setSignupDisplay] = useState(false);
+  const [isLoginPageRotating, setIsLoginPageRotating] = useState(false);
+  const [isSignupPageRotating, setIsSignupPageRotating] = useState(false);
   const handleLoginToSignup = () => {
     setIsLoginPage(false);
+    setLoginUsername("");
+    setLoginPassword("");
     setTimeout(() => {
       setLoginDisplay(false);
       setSignupDisplay(true);
-    }, 500);
+      setIsSignupPageRotating(true);
+      setTimeout(() => setIsSignupPageRotating(false), 400);
+    }, 400);
   };
   const handleSignupToLogin = () => {
     setIsLoginPage(true);
+    setSignupUsername("");
+    setSignupPassword("");
+    setConfirmPassword("");
+    setPhone("");
+    setEmail("");
+    setUsernameMessage("");
+    setPasswordMatchMessage("");
+    setIsUsernameChecked(false);
     setTimeout(() => {
       setLoginDisplay(true);
       setSignupDisplay(false);
-    }, 500);
+      setIsLoginPageRotating(true);
+      setTimeout(() => setIsLoginPageRotating(false), 400);
+    }, 400);
   };
   // 로그인 컨테이너 JS
   const [LoginUsername, setLoginUsername] = useState("");
@@ -39,6 +54,8 @@ const LoginPage: React.FC = () => {
   const [usernameMessage, setUsernameMessage] = useState("");
   const [passwordMatchMessage, setPasswordMatchMessage] = useState("");
   const [isUsernameChecked, setIsUsernameChecked] = useState(false);
+  const [passwordValidationMessage, setPasswordValidationMessage] =
+    useState("");
 
   const isUsernameValid = /^[a-z0-9]{1,20}$/.test(SignupUsername);
   const isPasswordValid =
@@ -47,6 +64,21 @@ const LoginPage: React.FC = () => {
     );
   const isPhoneValid = /^[0-9]*$/.test(phone);
   const isPasswordMatch = SignupPassword === confirmPassword;
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const password = e.target.value;
+    setSignupPassword(password);
+
+    if (
+      password.trim() !== "" &&
+      !/^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[a-z\d!@#$%^&*]{6,}$/.test(password)
+    ) {
+      setPasswordValidationMessage(
+        "비밀번호 형식을 확인해주세요. (소문자 + 숫자 + 특수문자)"
+      );
+    } else {
+      setPasswordValidationMessage(""); // 유효하면 메시지 제거
+    }
+  };
 
   const isSignupButtonEnabled =
     SignupUsername.trim() !== "" &&
@@ -86,7 +118,11 @@ const LoginPage: React.FC = () => {
       {/* 로그인 컨테이너 */}
       <div
         className={`${
-          isLoginPage ? "login-container" : "login-container-rotate"
+          isLoginPage
+            ? isLoginPageRotating
+              ? "login-container-rotate-back"
+              : "login-container"
+            : "login-container-rotate"
         }`}
         style={{ display: LoginDisplay ? "flex" : "none" }}
       >
@@ -136,7 +172,11 @@ const LoginPage: React.FC = () => {
       {/* 회원가입 컨테이너 */}
       <div
         className={`${
-          !isLoginPage ? "signup-container" : "signup-container-rotate"
+          !isLoginPage
+            ? isSignupPageRotating
+              ? "signup-container-rotate-back"
+              : "signup-container"
+            : "signup-container-rotate"
         }`}
         style={{ display: SignupDisplay ? "flex" : "none" }}
       >
@@ -182,8 +222,13 @@ const LoginPage: React.FC = () => {
             placeholder="비밀번호 (소문자+숫자+특수문자, 최소 6자)"
             className="signup-input-field"
             value={SignupPassword}
-            onChange={(e) => setSignupPassword(e.target.value)}
+            onChange={handlePasswordChange}
           />
+          {passwordValidationMessage && (
+            <p className="password-validation-message invalid">
+              {passwordValidationMessage}
+            </p>
+          )}
 
           {/* 비밀번호 확인 입력 */}
           <input
