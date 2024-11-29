@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import "../css/FirstPage.css";
 import thumbnail from "../images/thumbnail.jpg";
 
-const LoginPage: React.FC = () => {
+const FirstPage: React.FC = () => {
+  // 1. 화면 전환 관리
   const [isLoginPage, setIsLoginPage] = useState(true);
   const [LoginDisplay, setLoginDisplay] = useState(true);
   const [SignupDisplay, setSignupDisplay] = useState(false);
@@ -36,16 +37,44 @@ const LoginPage: React.FC = () => {
       setTimeout(() => setIsLoginPageRotating(false), 400);
     }, 400);
   };
-  // 로그인 컨테이너 JS
+  // 2. 로그인 페이지 JSX
   const [LoginUsername, setLoginUsername] = useState("");
   const [LoginPassword, setLoginPassword] = useState("");
 
-  // 비활성화 상태 관리
+  // 2 - 1. 비활성화 상태 관리
   const isLoginButtonEnabled =
     LoginUsername.trim() !== "" && LoginPassword.trim() !== "";
 
-  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 경계선 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-  // 회원가입 컨테이너 JS
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      // 로그인 요청 주소 입력 (결과는 현재 alert로 대체)
+      const response = await fetch("로그인 요청 주소", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: LoginUsername,
+          password: LoginPassword,
+        }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert("로그인 완료");
+      } else {
+        alert(
+          result.message ||
+            "존재하지 않는 아이디이거나 비밀번호가 잘못되었습니다."
+        );
+      }
+    } catch (error) {
+      alert("로그인 요청 중 오류가 발생했습니다.");
+    }
+  };
+
+  // 3. 회원가입 컨테이너 JSX
   const [SignupUsername, setSignupUsername] = useState("");
   const [SignupPassword, setSignupPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -56,7 +85,7 @@ const LoginPage: React.FC = () => {
   const [isUsernameChecked, setIsUsernameChecked] = useState(false);
   const [passwordValidationMessage, setPasswordValidationMessage] =
     useState("");
-
+  // 3 - 1. 아이디 & 비밀번호 형식 검사
   const isUsernameValid = /^[a-z0-9]{1,20}$/.test(SignupUsername);
   const isPasswordValid =
     /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[a-z\d!@#$%^&*]{6,}$/.test(
@@ -76,10 +105,10 @@ const LoginPage: React.FC = () => {
         "비밀번호 형식을 확인해주세요. (소문자 + 숫자 + 특수문자)"
       );
     } else {
-      setPasswordValidationMessage(""); // 유효하면 메시지 제거
+      setPasswordValidationMessage("");
     }
   };
-
+  // 3 - 2. 회원가입 버튼 활성화 조건
   const isSignupButtonEnabled =
     SignupUsername.trim() !== "" &&
     SignupPassword.trim() !== "" &&
@@ -93,17 +122,32 @@ const LoginPage: React.FC = () => {
     isUsernameChecked &&
     !usernameMessage.includes("불가능");
 
-  // 중복 확인 함수
-  const handleCheckDuplicate = () => {
-    if (SignupUsername === "existinguser") {
-      setUsernameMessage("사용 불가능한 아이디 입니다.");
-    } else {
-      setUsernameMessage("사용 가능한 아이디 입니다.");
+  // 3 - 3. 아이디 중복 확인 함수
+  const handleCheckDuplicate = async () => {
+    if (!SignupUsername.trim() || !isUsernameValid) {
+      alert("유효한 아이디를 입력하세요.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        // 아이디 중복 검사 페이지 주소 입력
+        `아이디 중복 검사 페이지 주소=${SignupUsername}`
+      );
+      const result = await response.json();
+
+      if (response.ok) {
+        setUsernameMessage("사용 불가능한 아이디 입니다.");
+      } else {
+        setUsernameMessage("사용 가능한 아이디 입니다.");
+      }
+    } catch (error) {
+      alert("중복 확인 요청 중 오류가 발생했습니다.");
     }
     setIsUsernameChecked(true);
   };
 
-  // 비밀번호 확인 메시지 업데이트
+  // 3 - 4. 비밀번호 확인 메시지
   const handleConfirmPasswordChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -112,10 +156,38 @@ const LoginPage: React.FC = () => {
       e.target.value !== SignupPassword ? "비밀번호가 동일하지 않습니다." : ""
     );
   };
+  // 3 - 5. 회원가입 요청
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
 
+    try {
+      const response = await fetch("회원가입 요청 주소", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: SignupUsername,
+          password: SignupPassword,
+          phone: phone,
+          email: email,
+        }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert("회원가입 완료");
+      } else {
+        alert(result.message || "회원가입 실패");
+      }
+    } catch (error) {
+      alert("회원가입 요청 중 오류가 발생했습니다.");
+    }
+  };
+
+  // 4. 로그인 페이지 HTML
   return (
     <div className="main-frame">
-      {/* 로그인 컨테이너 */}
       <div
         className={`${
           isLoginPage
@@ -149,6 +221,7 @@ const LoginPage: React.FC = () => {
             type="submit"
             className={`login-button ${isLoginButtonEnabled ? "enabled" : ""}`}
             disabled={!isLoginButtonEnabled}
+            onClick={handleLogin}
           >
             로그인
           </button>
@@ -168,8 +241,8 @@ const LoginPage: React.FC = () => {
           <button className="login-kakao-button">카카오로 로그인</button>
         </form>
       </div>
-      {/* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 경계선 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ */}
-      {/* 회원가입 컨테이너 */}
+
+      {/* 회원가입 페이지 HTML */}
       <div
         className={`${
           !isLoginPage
@@ -184,7 +257,6 @@ const LoginPage: React.FC = () => {
           <img onClick={handleSignupToLogin} src={thumbnail} alt="썸네일" />
         </div>
         <form method="POST" className="signup-form">
-          {/* 아이디 입력 및 중복확인 버튼 */}
           <div className="signup-username-container">
             <input
               type="text"
@@ -216,7 +288,6 @@ const LoginPage: React.FC = () => {
             </p>
           )}
 
-          {/* 비밀번호 입력 */}
           <input
             type="password"
             placeholder="비밀번호 (소문자+숫자+특수문자, 최소 6자)"
@@ -230,7 +301,6 @@ const LoginPage: React.FC = () => {
             </p>
           )}
 
-          {/* 비밀번호 확인 입력 */}
           <input
             type="password"
             placeholder="비밀번호 확인"
@@ -244,7 +314,6 @@ const LoginPage: React.FC = () => {
             </p>
           )}
 
-          {/* 전화번호 입력 */}
           <input
             type="tel"
             placeholder="전화번호"
@@ -253,7 +322,6 @@ const LoginPage: React.FC = () => {
             onChange={(e) => setPhone(e.target.value)}
           />
 
-          {/* 이메일 입력 */}
           <input
             type="email"
             placeholder="이메일"
@@ -268,6 +336,7 @@ const LoginPage: React.FC = () => {
               isSignupButtonEnabled ? "enabled" : ""
             }`}
             disabled={!isSignupButtonEnabled}
+            onClick={handleSignup}
           >
             회원가입 완료
           </button>
@@ -277,4 +346,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default FirstPage;
